@@ -1,0 +1,13 @@
+#cloud-config
+---
+coreos:
+  units:
+  - name: serf.service
+    runtime: yes
+    drop-ins:
+    - name: 10-serf-opts.conf
+      content: |-
+        [Service]
+        Environment=SERF_OPTS='--name=serf'
+        ExecStartPre=/bin/sh -c 'echo {} > /etc/serf/agent.json'
+        ExecStartPre=/bin/sh -c 'echo -e "#!/bin/sh\nDOCKER_HOST=unix:///run/early-docker.sock docker exec serf $#" > /opt/bin/serf; chmod +x /opt/bin/serf'

@@ -1,0 +1,14 @@
+[Unit]
+Description=Serf
+Requires=early-docker.service
+After=early-docker.service
+Before=early-docker.target
+
+[Service]
+Restart=always
+RestartSec=5
+Environment=DOCKER_HOST=unix:///run/early-docker.sock
+Environment=SERF_OPTS=
+ExecStartPre=-/usr/bin/mkdir -p /etc/serf /run/serf/handlers
+ExecStartPre=/usr/bin/docker pull steigr/serf
+ExecStart=/usr/bin/docker run --rm --net=host ${SERF_OPTS} steigr/serf agent -config-dir=/etc/serf
